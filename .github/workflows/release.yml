@@ -27,7 +27,9 @@ jobs:
           persist-credentials: false
 
       - name: Validate release metadata
-        run: ./scripts/validate_release.sh "${{ inputs.version }}"
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: ./scripts/validate_release.sh "${RELEASE_VERSION}"
 
   quality:
     uses: ./.github/workflows/quality.yml
