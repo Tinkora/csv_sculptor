@@ -40,8 +40,9 @@ export format. Reset restores the complete imported table.
 - Input is decoded as UTF-8 and never sent by the application to a server.
 - The preview renders cell values with `textContent`, not HTML.
 - CSV/TSV exports preserve cell values. Values beginning with `=`, `+`, `-`, or
-  `@` can be interpreted as formulas by spreadsheet software; review untrusted
-  data before opening an export in such software.
+  `@` can be interpreted as formulas by spreadsheet software. The export dialog
+  warns when these cells are present, but preserves the original values; review
+  untrusted data before opening an export in such software.
 - SQL output quotes identifiers and string values, but it is generated text,
   not a database migration. Review it against the target database dialect.
 - The browser preview is capped at 500 rows; transformations and exports still

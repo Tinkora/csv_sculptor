@@ -46,8 +46,8 @@ workbench that runs locally in the browser.
 
 - The application has no upload, analytics, account, persistence, or network API.
 - Cells are rendered with DOM `textContent`.
-- CSV/TSV preserves formula-like prefixes. The tool must warn about spreadsheet
-  formula injection instead of silently changing the data.
+- CSV/TSV preserves formula-like prefixes. The export dialog warns about
+  spreadsheet formula injection instead of silently changing the data.
 - SQL output quotes identifiers and values, but users must still review it for
   the target database dialect and permission model.
 - The MCP JSON file is a future integration schema, not an Agent-callable transport.
