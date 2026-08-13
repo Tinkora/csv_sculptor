@@ -15,4 +15,12 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Draft Agent workflow and tool schemas without an MCP transport.
 - Bilingual public documentation and repository contract checks.
 
-No release has been published yet.
+## [0.1.0-alpha.1] - 2026-08-14
+
+### Alpha release
+
+- First public alpha candidate with a browser-only CSV/TSV workbench.
+- GitHub Pages deployment and reproducible web bundle evidence.
+- SHA256 checksums, dependency license inventory, and third-party notices.
+
+[0.1.0-alpha.1]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.1
