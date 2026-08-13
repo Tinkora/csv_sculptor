@@ -1,0 +1,137 @@
+name: Release candidate build
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: SemVer alpha candidate version matching Cargo metadata
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.repository }}-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate candidate version
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate release metadata
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: ./scripts/validate_release.sh "${RELEASE_VERSION}"
+
+  quality:
+    uses: ./.github/workflows/quality.yml
+    permissions:
+      contents: read
+
+  build:
+    name: Build web bundle
+    needs: [validate, quality]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Rust and wasm32 target
+        run: |
+          rustup toolchain install 1.95 --profile minimal
+          rustup target add wasm32-unknown-unknown --toolchain 1.95
+
+      - name: Install wasm-pack
+        run: cargo +1.95 install wasm-pack --version 0.15.0 --locked
+
+      - name: Build web editor
+        run: ./scripts/build_web.sh
+
+      - name: Package and checksum
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          mkdir -p release
+          tar -czf "release/csv_sculptor-${RELEASE_VERSION}-web.tar.gz" -C dist .
+          sha256sum "release/csv_sculptor-${RELEASE_VERSION}-web.tar.gz" \
+            > "release/csv_sculptor-${RELEASE_VERSION}-web.tar.gz.sha256"
+
+      - name: Upload web bundle
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: csv_sculptor-${{ inputs.version }}-web
+          path: release/*
+          if-no-files-found: error
+
+  evidence:
+    name: Aggregate and attest release evidence
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      artifact-metadata: write
+      attestations: write
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install Rust
+        run: rustup toolchain install 1.95 --profile minimal
+
+      - name: Download web bundle
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
+        with:
+          name: csv_sculptor-${{ inputs.version }}-web
+          path: dist
+
+      - name: Generate release evidence
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          cargo +1.95 metadata --format-version 1 --locked > artifacts.cargo-metadata.json
+          python3 scripts/generate_release_evidence.py \
+            --dist dist \
+            --metadata artifacts.cargo-metadata.json \
+            --repository "${GITHUB_REPOSITORY}" \
+            --version "${RELEASE_VERSION}" \
+            --revision "${GITHUB_SHA}" \
+            --created "$(git show -s --format=%cI "${GITHUB_SHA}")"
+
+      - name: Attest release bundle
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.0.0
+        with:
+          subject-checksums: dist/SHA256SUMS
+
+      - name: Attest release SBOM
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.0.0
+        with:
+          subject-checksums: dist/SHA256SUMS
+          sbom-path: dist/sbom.spdx.json
+
+      - name: Upload release evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: csv_sculptor-${{ inputs.version }}-release-evidence
+          path: |
+            dist/csv_sculptor-${{ inputs.version }}-web.tar.gz
+            dist/csv_sculptor-${{ inputs.version }}-web.tar.gz.sha256
+            dist/SHA256SUMS
+            dist/sbom.spdx.json
+            dist/license_inventory.json
+            dist/THIRD_PARTY_NOTICES.md
+          if-no-files-found: error
