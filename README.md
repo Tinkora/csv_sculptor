@@ -8,12 +8,14 @@ data behavior and a thin WebAssembly boundary exposes it to the browser.
 
 ## Maturity
 
-**Draft.** The native core currently passes local formatting, test, Clippy, and
-WASM compilation checks. The browser workbench, hosted CI, release artifacts,
-and public deployment still require exact-commit evidence before this project
-can claim Alpha maturity.
+**Alpha.** The hosted quality and release workflows pass for the published
+candidate, the browser workbench is deployed to GitHub Pages, and the release
+bundle includes checksums, an SPDX SBOM, a license inventory, and attestations.
 
-- **Local human interface:** implemented, pending complete real-browser evidence.
+- **Try it:** [GitHub Pages](https://tinkora.github.io/csv_sculptor/)
+- **Latest candidate:** [v0.1.0-alpha.1 release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.1)
+
+- **Local human interface:** implemented and covered by hosted Chromium smoke tests.
 - **Agent schema draft:** `skills/mcp-tools.json` documents possible tool shapes.
 - **Not Agent-callable:** no MCP server, hosted endpoint, authentication, or tool
   registration is shipped.

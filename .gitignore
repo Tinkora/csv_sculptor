@@ -1,5 +1,6 @@
 /target/
 /dist/
+scripts/__pycache__/
 crates/csv_sculptor_web/static/pkg/
 crates/csv_sculptor_web/node_modules/
 crates/csv_sculptor_web/test-results/
