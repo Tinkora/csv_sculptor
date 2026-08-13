@@ -8,7 +8,7 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ## [0.1.0-alpha.1] - 2026-08-14
 
-### Added
+### Release assets
 
 - Published the browser workbench to GitHub Pages with a reproducible release bundle.
 - Added checksums, SPDX SBOM, license inventory, third-party notices, and build attestations.
