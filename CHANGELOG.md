@@ -17,7 +17,7 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ## [0.1.0-alpha.1] - 2026-08-14
 
-### Added
+### Alpha release
 
 - First public alpha candidate with a browser-only CSV/TSV workbench.
 - GitHub Pages deployment and reproducible web bundle evidence.
