@@ -33,6 +33,9 @@ jobs:
       - name: Check repository documentation
         run: ruby scripts/check_docs.rb
 
+      - name: Test release evidence generator
+        run: python3 scripts/test_generate_release_evidence.py
+
       - name: Test workflow contracts
         run: ruby scripts/test_check_workflow_contracts.rb
 
