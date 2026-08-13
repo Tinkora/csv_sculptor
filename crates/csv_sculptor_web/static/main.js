@@ -7,7 +7,7 @@ const messages = {
     open_file: 'Open file', paste: 'Paste', sample: 'Load sample', header_row: 'First row is a header', row_limit: 'Maximum rows', deduplicate: 'Deduplicate', reset: 'Reset', export: 'Export',
     drop_title: 'Drop a CSV or TSV file here', drop_help: 'or use Open file or Paste. UTF-8 text up to 10 MiB.', rows: 'rows', columns: 'columns', delimiter: 'delimiter',
     paste_title: 'Paste CSV or TSV', paste_help: 'Input stays in this browser tab.', paste_label: 'CSV or TSV input', cancel: 'Cancel', import: 'Import',
-    export_title: 'Export data', export_help: 'Review generated text before copying or downloading it.', format: 'Format', table_name: 'Table name', output: 'Generated output', close: 'Close', copy: 'Copy', download: 'Download',
+    export_title: 'Export data', export_help: 'Review generated text before copying or downloading it.', format: 'Format', table_name: 'Table name', output: 'Generated output', close: 'Close', copy: 'Copy', download: 'Download', formula_warning: '{count} cell(s) start with =, +, -, or @ and may be interpreted as spreadsheet formulas. Review before opening the export.',
     filters: 'Column filters', visible_columns: 'Visible columns', show_column: 'Show', column_word: 'column', filter_value: 'Filter value', all: 'No filter', equals: 'Equals', not_equals: 'Not equals', contains: 'Contains', starts: 'Starts with', ends: 'Ends with', greater: 'Greater than', less: 'Less than', empty: 'Is empty', not_empty: 'Is not empty',
     engine_failed: 'The WASM processing engine could not be loaded. Reload the page or rebuild the package.', empty_input: 'Paste CSV or TSV data before importing.', invalid_utf8: 'The selected file is not valid UTF-8.', too_large: 'Input exceeds the 10 MiB limit.', loaded: 'Loaded {rows} rows and {columns} columns.', preview: 'Previewing the first {rows} rows.', copied: 'Output copied.', downloaded: 'Download started.', reset_done: 'Original data restored.', deduplicated: 'Duplicate rows removed.', export_failed: 'Export failed: {error}', parse_failed: 'Parse failed: {error}', file_failed: 'The file could not be read.', filter_failed: 'Filter failed: {error}', sort_failed: 'Sort failed: {error}', column_hidden: 'At least one column must remain visible.', invalid_row_limit: 'Maximum rows must be a positive whole number.',
   },
@@ -16,7 +16,7 @@ const messages = {
     open_file: '打开文件', paste: '粘贴', sample: '加载示例', header_row: '第一行是表头', row_limit: '最大行数', deduplicate: '去重', reset: '重置', export: '导出',
     drop_title: '将 CSV 或 TSV 文件拖放到此处', drop_help: '也可使用“打开文件”或“粘贴”。支持最大 10 MiB 的 UTF-8 文本。', rows: '行', columns: '列', delimiter: '分隔符',
     paste_title: '粘贴 CSV 或 TSV', paste_help: '输入只保留在当前浏览器标签页。', paste_label: 'CSV 或 TSV 输入', cancel: '取消', import: '导入',
-    export_title: '导出数据', export_help: '复制或下载前先检查生成内容。', format: '格式', table_name: '表名', output: '生成结果', close: '关闭', copy: '复制', download: '下载',
+    export_title: '导出数据', export_help: '复制或下载前先检查生成内容。', format: '格式', table_name: '表名', output: '生成结果', close: '关闭', copy: '复制', download: '下载', formula_warning: '有 {count} 个单元格以 =、+、- 或 @ 开头，打开导出文件时可能被电子表格解释为公式。请先检查。',
     filters: '列筛选', visible_columns: '可见列', show_column: '显示', column_word: '列', filter_value: '筛选值', all: '不筛选', equals: '等于', not_equals: '不等于', contains: '包含', starts: '开头是', ends: '结尾是', greater: '大于', less: '小于', empty: '为空', not_empty: '非空',
     engine_failed: 'WASM 处理引擎加载失败。请刷新页面或重新构建 package。', empty_input: '请先粘贴 CSV 或 TSV 数据。', invalid_utf8: '所选文件不是有效的 UTF-8。', too_large: '输入超过 10 MiB 限制。', loaded: '已加载 {rows} 行、{columns} 列。', preview: '仅预览前 {rows} 行。', copied: '已复制输出。', downloaded: '已开始下载。', reset_done: '已恢复原始数据。', deduplicated: '已移除重复行。', export_failed: '导出失败：{error}', parse_failed: '解析失败：{error}', file_failed: '无法读取文件。', filter_failed: '筛选失败：{error}', sort_failed: '排序失败：{error}', column_hidden: '至少保留一列可见。', invalid_row_limit: '最大行数必须是正整数。',
   },
@@ -47,10 +47,31 @@ function applyLanguage() {
   byId('language-button').textContent = state.language === 'en' ? '中' : 'EN';
   byId('language-button').setAttribute('aria-label', state.language === 'en' ? 'Switch to Chinese' : '切换到英文');
   byId('engine-status').textContent = state.wasm ? t('ready') : t('loading');
-  if (state.current) render(JSON.parse(state.current), state.controls ? JSON.parse(state.controls) : JSON.parse(state.working));
+  if (state.current) {
+    render(JSON.parse(state.current), state.controls ? JSON.parse(state.controls) : JSON.parse(state.working));
+    if (!byId('export-dialog').open) byId('formula-warning').hidden = true;
+    else updateFormulaWarning(state.exportFormat);
+  }
 }
 
 function parseResult(value) { return typeof value === 'string' ? value : String(value); }
+
+function formulaLikeCellCount(tableJson) {
+  const table = JSON.parse(tableJson);
+  return table.rows.reduce(
+    (count, row) => count + row.filter((value) => /^[=+\-@]/.test(value)).length,
+    0,
+  );
+}
+
+function updateFormulaWarning(format) {
+  const warning = byId('formula-warning');
+  const count = format === 'csv' || format === 'tsv'
+    ? formulaLikeCellCount(state.current)
+    : 0;
+  warning.hidden = count === 0;
+  warning.textContent = count > 0 ? t('formula_warning', { count }) : '';
+}
 
 async function initialize() {
   try {
@@ -192,6 +213,7 @@ function updateExport() {
     const format = byId('export-format').value; state.exportFormat = format; const isSql = format === 'sql';
     byId('table-name').hidden = !isSql; byId('table-name-label').hidden = !isSql;
     state.exportText = state.wasm.export_table(state.current, format, byId('table-name').value); byId('export-output').value = state.exportText; setError('');
+    updateFormulaWarning(format);
   } catch (error) { setError('export_failed', { error: errorText(error) }); }
 }
 
