@@ -1,0 +1,110 @@
+{
+  "name": "csv_sculptor",
+  "version": "0.1.0",
+  "description": "Draft schemas for a future CSV Sculptor Agent transport. This repository does not ship an MCP server or tool registration.",
+  "tools": [
+    {
+      "name": "csv_sculptor_parse",
+      "description": "Parse a CSV/TSV string into a structured table. Auto-detects delimiter (comma, tab, pipe, semicolon) and optionally detects whether the first row is a header.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "Raw CSV/TSV text content to parse."
+          },
+          "has_header": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether the first row should be treated as a header. Set to false to auto-detect."
+          }
+        },
+        "required": ["input"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "csv_sculptor_filter",
+      "description": "Apply one or more filter conditions to a CsvTable. All conditions must match (AND logic). Supports 9 operators: Equals, NotEquals, Contains, StartsWith, EndsWith, GreaterThan, LessThan, IsEmpty, IsNotEmpty.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table_json": {
+            "type": "string",
+            "description": "Serialized CsvTable JSON from csv_sculptor_parse."
+          },
+          "conditions_json": {
+            "type": "string",
+            "description": "JSON array of filter conditions, each with 'column', 'operator', and optional 'value'."
+          }
+        },
+        "required": ["table_json", "conditions_json"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "csv_sculptor_sort",
+      "description": "Sort a CsvTable by a specified column, ascending or descending. Numeric columns are sorted by numeric value; text columns lexicographically.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table_json": {
+            "type": "string",
+            "description": "Serialized CsvTable JSON."
+          },
+          "column": {
+            "type": "string",
+            "description": "Column name to sort by."
+          },
+          "ascending": {
+            "type": "boolean",
+            "default": true,
+            "description": "Sort direction: true for ascending, false for descending."
+          }
+        },
+        "required": ["table_json", "column"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "csv_sculptor_export",
+      "description": "Export a CsvTable to a specified format. Supported formats: json, yaml, markdown, sql, csv, tsv.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "table_json": {
+            "type": "string",
+            "description": "Serialized CsvTable JSON."
+          },
+          "format": {
+            "type": "string",
+            "enum": ["json", "yaml", "markdown", "sql", "csv", "tsv"],
+            "description": "Target export format."
+          },
+          "table_name": {
+            "type": "string",
+            "default": "table_name",
+            "description": "Table name used for SQL INSERT format."
+          }
+        },
+        "required": ["table_json", "format"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "csv_sculptor_detect_delimiter",
+      "description": "Detect the delimiter character used in a CSV/TSV string. Returns one of: comma (,), tab (\\t), pipe (|), or semicolon (;).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "input": {
+            "type": "string",
+            "description": "Raw CSV/TSV text content to analyze."
+          }
+        },
+        "required": ["input"],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

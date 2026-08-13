@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Inspect, filter, sort, and convert CSV or TSV locally in your browser.">
+    <meta name="color-scheme" content="light">
+    <title>CSV Sculptor</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#workbench" data-i18n="skip">Skip to workbench</a>
+    <header class="topbar">
+      <div class="brand-block">
+        <span class="brand-mark" aria-hidden="true">CS</span>
+        <div>
+          <h1>CSV Sculptor</h1>
+          <p data-i18n="tagline">Local CSV and TSV inspection without uploads.</p>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <span id="engine-status" class="engine-status" role="status" aria-label="Processing engine status">Loading</span>
+        <button id="language-button" class="button icon-button" type="button" aria-label="Switch to Chinese" title="Switch language">中</button>
+      </div>
+    </header>
+
+    <main id="workbench" class="workbench" tabindex="-1">
+      <section class="toolbar-band" aria-label="Data actions">
+        <div class="toolbar-group">
+          <label class="button primary" for="file-input" data-i18n="open_file">Open file</label>
+          <input id="file-input" class="visually-hidden" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain">
+          <button id="paste-button" class="button" type="button" data-i18n="paste">Paste</button>
+          <button id="sample-button" class="button" type="button" data-i18n="sample">Load sample</button>
+        </div>
+        <div class="toolbar-group">
+          <label class="checkbox-label" for="has-header">
+            <input id="has-header" type="checkbox" checked>
+            <span data-i18n="header_row">First row is a header</span>
+          </label>
+          <label class="number-control" for="row-limit">
+            <span data-i18n="row_limit">Maximum rows</span>
+            <input id="row-limit" type="number" min="1" step="1" inputmode="numeric" disabled>
+          </label>
+          <button id="deduplicate-button" class="button" type="button" disabled data-i18n="deduplicate">Deduplicate</button>
+          <button id="reset-button" class="button" type="button" disabled data-i18n="reset">Reset</button>
+          <button id="export-button" class="button primary" type="button" disabled data-i18n="export">Export</button>
+        </div>
+      </section>
+
+      <section id="drop-zone" class="drop-zone" aria-labelledby="drop-title">
+        <div class="drop-glyph" aria-hidden="true">CSV</div>
+        <div>
+          <h2 id="drop-title" data-i18n="drop_title">Drop a CSV or TSV file here</h2>
+          <p data-i18n="drop_help">or use Open file or Paste. UTF-8 text up to 10 MiB.</p>
+        </div>
+      </section>
+
+      <section id="data-panel" class="data-panel" hidden aria-label="Parsed data">
+        <div class="summary-strip" role="status" aria-live="polite">
+          <span><strong id="row-count">0</strong> <span data-i18n="rows">rows</span></span>
+          <span><strong id="column-count">0</strong> <span data-i18n="columns">columns</span></span>
+          <span><span data-i18n="delimiter">delimiter</span> <strong id="delimiter-value">-</strong></span>
+          <span id="preview-note"></span>
+        </div>
+        <div id="filter-strip" class="filter-strip" aria-label="Column filters"></div>
+        <div id="table-scroll" class="table-scroll" tabindex="0" aria-label="CSV data table"></div>
+        <div id="column-strip" class="column-strip" aria-label="Visible columns"></div>
+      </section>
+
+      <p id="message" class="message" role="status" aria-live="polite"></p>
+      <p id="error" class="error" role="alert" hidden></p>
+    </main>
+
+    <dialog id="paste-dialog" aria-labelledby="paste-title">
+      <form method="dialog" class="dialog-shell">
+        <div class="dialog-heading">
+          <div>
+            <h2 id="paste-title" data-i18n="paste_title">Paste CSV or TSV</h2>
+            <p data-i18n="paste_help">Input stays in this browser tab.</p>
+          </div>
+          <button class="button icon-button" value="cancel" aria-label="Close">×</button>
+        </div>
+        <label for="paste-input" data-i18n="paste_label">CSV or TSV input</label>
+        <textarea id="paste-input" rows="12" spellcheck="false"></textarea>
+        <div class="dialog-actions">
+          <button class="button" value="cancel" data-i18n="cancel">Cancel</button>
+          <button id="paste-import-button" class="button primary" value="default" type="button" data-i18n="import">Import</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="export-dialog" aria-labelledby="export-title">
+      <form method="dialog" class="dialog-shell export-shell">
+        <div class="dialog-heading">
+          <div>
+            <h2 id="export-title" data-i18n="export_title">Export data</h2>
+            <p data-i18n="export_help">Review generated text before copying or downloading it.</p>
+          </div>
+          <button class="button icon-button" value="cancel" aria-label="Close">×</button>
+        </div>
+        <div class="export-controls">
+          <label for="export-format" data-i18n="format">Format</label>
+          <select id="export-format">
+            <option value="csv">CSV</option>
+            <option value="tsv">TSV</option>
+            <option value="json_pretty">JSON</option>
+            <option value="yaml">YAML</option>
+            <option value="markdown">Markdown</option>
+            <option value="sql">SQL INSERT</option>
+          </select>
+          <label id="table-name-label" for="table-name" data-i18n="table_name">Table name</label>
+          <input id="table-name" value="records" autocomplete="off">
+        </div>
+        <label for="export-output" data-i18n="output">Generated output</label>
+        <textarea id="export-output" rows="14" readonly spellcheck="false"></textarea>
+        <div class="dialog-actions">
+          <button class="button" value="cancel" data-i18n="close">Close</button>
+          <button id="copy-button" class="button" type="button" data-i18n="copy">Copy</button>
+          <button id="download-button" class="button primary" type="button" data-i18n="download">Download</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

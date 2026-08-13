@@ -1,0 +1,29 @@
+name: Quality
+
+'on':
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    uses: Tinkora/.github/.github/workflows/reusable-rust-quality.yml@23e400594e848347e41de51e22250ecf39151970
+    with:
+      working-directory: .
+      toolchain: 1.95.0
+      locked: true
+      msrv: 1.95.0
+      coverage: true
+
+  wasm:
+    uses: Tinkora/.github/.github/workflows/reusable-wasm-quality.yml@23e400594e848347e41de51e22250ecf39151970
+    with:
+      working-directory: crates/csv_sculptor_web
+      toolchain: 1.95.0
+      locked: true
+      playwright-smoke: true
+      node-version: '24'

@@ -1,0 +1,7 @@
+/target/
+crates/csv_sculptor_web/static/pkg/
+crates/csv_sculptor_web/node_modules/
+crates/csv_sculptor_web/test-results/
+crates/csv_sculptor_web/playwright-report/
+.playwright-cli/
+output/playwright/

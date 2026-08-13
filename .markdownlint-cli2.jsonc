@@ -1,0 +1,15 @@
+{
+  "config": {
+    "MD013": false,
+    "MD060": false
+  },
+  "ignores": [
+    "AGENTS.md",
+    "design-system/**",
+    "**/node_modules/**",
+    "**/pkg/**",
+    "**/playwright-report/**",
+    "**/target/**",
+    "**/test-results/**"
+  ]
+}

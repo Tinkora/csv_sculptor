@@ -1,0 +1,4 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="CSV Sculptor">
+  <rect width="64" height="64" rx="8" fill="#1d4ed8"/>
+  <path fill="#ffffff" d="M16 18h13v6h-9v16h9v6H16a2 2 0 0 1-2-2V20a2 2 0 0 1 2-2Zm19 0h15v6H37v5h11a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H33v-6h11v-5H33a2 2 0 0 1-2-2V20a2 2 0 0 1 2-2h2Z"/>
+</svg>
