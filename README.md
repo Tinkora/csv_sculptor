@@ -116,6 +116,8 @@ artifacts are ignored and must not be committed.
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [Changelog](CHANGELOG.md)
 
+[Support Tinkora on Ko-fi](https://ko-fi.com/tinkora)
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
