@@ -6,6 +6,13 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+## [0.1.0-alpha.2] - 2026-08-14
+
+### Fixed
+
+- Warn before copying or downloading CSV/TSV values that spreadsheet software
+  may interpret as formulas, while preserving the original cell values.
+
 ## [0.1.0-alpha.1] - 2026-08-14
 
 ### Release assets
@@ -23,3 +30,4 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 - Bilingual public documentation and repository contract checks.
 
 [0.1.0-alpha.1]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.1
+[0.1.0-alpha.2]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.2
