@@ -9,7 +9,7 @@ CSV Sculptor 是一个浏览器原生的 CSV/TSV 工作台，用于查看、筛�
 **Alpha。** 托管质量和发布工作流已通过，浏览器工作台已部署到 GitHub Pages，发布包包含 checksum、SPDX SBOM、许可证清单和构建证明。
 
 - **在线体验：** [GitHub Pages](https://tinkora.github.io/csv_sculptor/)
-- **最新候选版本：** [v0.1.0-alpha.1 Release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.1)
+- **最新候选版本：** [v0.1.0-alpha.2 Release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.2)
 
 - **本地人类界面：** 已实现，并由托管 Chromium smoke 测试覆盖。
 - **Agent schema 草案：** `skills/mcp-tools.json` 记录了可能的工具结构。

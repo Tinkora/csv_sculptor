@@ -13,7 +13,7 @@ candidate, the browser workbench is deployed to GitHub Pages, and the release
 bundle includes checksums, an SPDX SBOM, a license inventory, and attestations.
 
 - **Try it:** [GitHub Pages](https://tinkora.github.io/csv_sculptor/)
-- **Latest candidate:** [v0.1.0-alpha.1 release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.1)
+- **Latest candidate:** [v0.1.0-alpha.2 release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.2)
 
 - **Local human interface:** implemented and covered by hosted Chromium smoke tests.
 - **Agent schema draft:** `skills/mcp-tools.json` documents possible tool shapes.
