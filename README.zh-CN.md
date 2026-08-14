@@ -103,6 +103,8 @@ RustSec advisory 扫描，避免重复请求 registry API。
 - [行为准则](CODE_OF_CONDUCT.zh-CN.md)
 - [变更日志](CHANGELOG.md)
 
+[在 Ko-fi 上支持 Tinkora](https://ko-fi.com/tinkora)
+
 ## 许可证
 
 MIT，详见 [LICENSE](LICENSE)。
