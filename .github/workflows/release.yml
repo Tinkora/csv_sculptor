@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: SemVer alpha candidate version matching Cargo metadata
+        description: Tag name including the leading v, such as v0.1.0-alpha.1
         required: true
         type: string
 
