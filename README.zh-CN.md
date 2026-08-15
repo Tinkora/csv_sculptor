@@ -9,7 +9,7 @@ CSV Sculptor 是一个浏览器原生的 CSV/TSV 工作台，用于查看、筛�
 **Alpha。** 托管质量和发布工作流已通过，浏览器工作台已部署到 GitHub Pages，发布包包含 checksum、SPDX SBOM、许可证清单和构建证明。
 
 - **在线体验：** [GitHub Pages](https://tinkora.github.io/csv_sculptor/)
-- **最新候选版本：** [v0.1.0-alpha.2 Release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.2)
+- **最新候选版本：** [v0.1.0-alpha.3 Release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.3)
 
 - **本地人类界面：** 已实现，并由托管 Chromium smoke 测试覆盖。
 - **Agent schema 草案：** `skills/mcp-tools.json` 记录了可能的工具结构。
@@ -32,7 +32,7 @@ CSV Sculptor 是一个浏览器原生的 CSV/TSV 工作台，用于查看、筛�
 
 - 输入按 UTF-8 解码，应用不会把输入发送到服务器。
 - 预览使用 `textContent` 而不是 HTML 渲染单元格内容。
-- CSV/TSV 导出保留原始单元格值。导出对话框会提示以 `=`、`+`、`-` 或 `@` 开头的单元格可能被电子表格软件解释为公式，但不会修改原始值；使用此类软件打开不可信导出前必须检查内容。
+- CSV/TSV 导出保留原始单元格值。导出对话框会按安全策略检查解析后的字段：跳过可选 ASCII 空格后，如果字段以 ASCII 或全角公式前缀开头就显示警告。工具不会改写数据；使用电子表格软件打开不可信导出前必须检查内容。
 - SQL 输出会引用标识符和字符串，但它是生成的文本，不是数据库迁移；应按目标数据库方言复核。
 - 浏览器最多预览 500 行；转换和导出仍针对内存中的完整表格。
 

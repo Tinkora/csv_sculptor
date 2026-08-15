@@ -32,12 +32,14 @@ test("warns before exporting spreadsheet formula-like cells", async ({ page }) =
   await page.goto("/static/");
   await expect(page.getByText("Ready", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Paste" }).click();
-  await page.getByLabel("CSV or TSV input").fill("name,value\nfirst,=1+1\nsecond,ok\nthird,@cmd\n");
+  await page.getByLabel("CSV or TSV input").fill(
+    "name,＝value\nfirst,=1+1\nsecond,ok\nthird,\"  @cmd\"\nfourth,\"\tcommand\"\nfifth,＝1+1\n",
+  );
   await page.getByRole("button", { name: "Import" }).click();
 
   await page.getByRole("button", { name: "Export" }).click();
   await expect(page.getByRole("alert")).toHaveText(
-    "2 cell(s) start with =, +, -, or @ and may be interpreted as spreadsheet formulas. Review before opening the export.",
+    "5 cell(s) may be interpreted as spreadsheet formulas after optional leading spaces. Review before opening the export.",
   );
   await page.getByLabel("Format").selectOption("json_pretty");
   await expect(page.getByRole("alert")).toBeHidden();

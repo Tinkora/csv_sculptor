@@ -6,6 +6,15 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+## [0.1.0-alpha.3] - 2026-08-15
+
+### Security
+
+- Detect spreadsheet formula-like values after CSV parsing, including tab,
+  carriage-return, line-feed, full-width, and optional leading-space variants.
+- Keep formula-risk classification in the Rust core while preserving original
+  CSV/TSV field values in every export.
+
 ## [0.1.0-alpha.2] - 2026-08-14
 
 ### Fixed
@@ -31,3 +40,4 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 [0.1.0-alpha.1]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.1
 [0.1.0-alpha.2]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.2
+[0.1.0-alpha.3]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.3

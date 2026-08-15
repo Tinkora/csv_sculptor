@@ -1,6 +1,7 @@
 use csv_sculptor_core::wasm::{
-    wasm_deduplicate, wasm_detect_delimiter, wasm_export, wasm_filter, wasm_get_headers,
-    wasm_limit, wasm_parse_csv, wasm_select_columns, wasm_sort,
+    wasm_deduplicate, wasm_detect_delimiter, wasm_export, wasm_filter,
+    wasm_formula_like_cell_count, wasm_get_headers, wasm_limit, wasm_parse_csv,
+    wasm_select_columns, wasm_sort,
 };
 use wasm_bindgen::prelude::*;
 
@@ -40,6 +41,11 @@ pub fn limit_table(table_json: &str, n: usize) -> Result<JsValue, JsValue> {
 #[wasm_bindgen]
 pub fn export_table(table_json: &str, format: &str, table_name: &str) -> Result<String, JsValue> {
     wasm_export(table_json, format, table_name)
+}
+
+#[wasm_bindgen]
+pub fn formula_like_cell_count(table_json: &str) -> Result<usize, JsValue> {
+    wasm_formula_like_cell_count(table_json)
 }
 
 #[wasm_bindgen]

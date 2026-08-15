@@ -3,6 +3,23 @@ use crate::parse::CsvTable;
 use serde::Serialize;
 use serde::ser::SerializeMap;
 
+/// Count cells that spreadsheet software may interpret as formulas.
+pub fn count_formula_like_cells(table: &CsvTable) -> usize {
+    table
+        .headers
+        .iter()
+        .chain(table.rows.iter().flatten())
+        .filter(|value| is_formula_like(value))
+        .count()
+}
+
+fn is_formula_like(value: &str) -> bool {
+    matches!(
+        value.trim_start_matches(' ').chars().next(),
+        Some('=' | '+' | '-' | '@' | '\t' | '\r' | '\n' | '＝' | '＋' | '－' | '＠')
+    )
+}
+
 struct OrderedRow<'a> {
     headers: &'a [String],
     values: &'a [String],

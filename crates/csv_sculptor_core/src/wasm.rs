@@ -140,6 +140,13 @@ pub fn wasm_export(table_json: &str, format: &str, table_name: &str) -> Result<S
     }
 }
 
+/// Count spreadsheet formula-like cells in a serialized CsvTable.
+#[wasm_bindgen]
+pub fn wasm_formula_like_cell_count(table_json: &str) -> Result<usize, JsValue> {
+    let table = table_from_js(table_json).map_err(core_err)?;
+    Ok(export::count_formula_like_cells(&table))
+}
+
 /// Detect the delimiter character from raw CSV/TSV text.
 ///
 /// Returns a single-character string like ",", "\t", "|", or ";".
