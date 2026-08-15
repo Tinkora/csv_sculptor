@@ -1,4 +1,6 @@
-use csv_sculptor_core::{CoreError, CsvTable, parse_csv, to_json, to_sql_insert};
+use csv_sculptor_core::{
+    CoreError, CsvTable, count_formula_like_cells, parse_csv, to_json, to_sql_insert,
+};
 
 #[test]
 fn delimiter_detection_ignores_delimiters_inside_quoted_fields() {
@@ -74,4 +76,29 @@ fn object_export_rejects_malformed_rows() {
         to_json(&table, false),
         Err(CoreError::InvalidInput(_))
     ));
+}
+
+#[test]
+fn formula_warning_covers_documented_prefixes_in_headers_and_rows() {
+    let table = CsvTable {
+        headers: vec!["＝value".into()],
+        rows: vec![
+            vec!["=1+1".into()],
+            vec!["+1".into()],
+            vec!["-1".into()],
+            vec!["  @SUM(A1)".into()],
+            vec!["\tcommand".into()],
+            vec!["\rcommand".into()],
+            vec!["\ncommand".into()],
+            vec!["＝1+1".into()],
+            vec!["＋1".into()],
+            vec!["－1".into()],
+            vec!["＠command".into()],
+            vec!["plain text".into()],
+        ],
+        delimiter: ',',
+        row_count: 12,
+    };
+
+    assert_eq!(count_formula_like_cells(&table), 12);
 }

@@ -46,8 +46,17 @@ workbench that runs locally in the browser.
 
 - The application has no upload, analytics, account, persistence, or network API.
 - Cells are rendered with DOM `textContent`.
-- CSV/TSV preserves formula-like prefixes. The export dialog warns about
-  spreadsheet formula injection instead of silently changing the data.
+- Formula detection runs on parsed fields, not raw lines. Direct prefixes cover
+  `=`, `+`, `-`, `@`, tab, carriage return, line feed, and their full-width
+  variants as documented by [OWASP CSV Injection](https://owasp.org/www-community/attacks/CSV_Injection).
+- Detection also checks after optional leading ASCII spaces because LibreOffice
+  can remove them with its [Trim spaces import option](https://help.libreoffice.org/latest/en-US/text/shared/00/00000208.html).
+  The scanner does not remove those spaces or change the field value; RFC 4180
+  treats spaces as field content.
+- CSV/TSV preserves formula-like prefixes and warns instead of silently changing
+  the data. [CWE-1236](https://cwe.mitre.org/data/definitions/1236.html) notes that
+  mitigations vary across spreadsheet products, so the warning is not a claim of
+  universal sanitization.
 - SQL output quotes identifiers and values, but users must still review it for
   the target database dialect and permission model.
 - The MCP JSON file is a future integration schema, not an Agent-callable transport.

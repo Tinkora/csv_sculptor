@@ -13,7 +13,7 @@ candidate, the browser workbench is deployed to GitHub Pages, and the release
 bundle includes checksums, an SPDX SBOM, a license inventory, and attestations.
 
 - **Try it:** [GitHub Pages](https://tinkora.github.io/csv_sculptor/)
-- **Latest candidate:** [v0.1.0-alpha.2 release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.2)
+- **Latest candidate:** [v0.1.0-alpha.3 release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.3)
 
 - **Local human interface:** implemented and covered by hosted Chromium smoke tests.
 - **Agent schema draft:** `skills/mcp-tools.json` documents possible tool shapes.
@@ -39,10 +39,10 @@ export format. Reset restores the complete imported table.
 
 - Input is decoded as UTF-8 and never sent by the application to a server.
 - The preview renders cell values with `textContent`, not HTML.
-- CSV/TSV exports preserve cell values. Values beginning with `=`, `+`, `-`, or
-  `@` can be interpreted as formulas by spreadsheet software. The export dialog
-  warns when these cells are present, but preserves the original values; review
-  untrusted data before opening an export in such software.
+- CSV/TSV exports preserve cell values. The export dialog warns when a parsed
+  field begins, after optional ASCII spaces, with an ASCII or full-width formula
+  prefix identified by the documented security policy. It does not rewrite the
+  data; review untrusted exports before opening them in spreadsheet software.
 - SQL output quotes identifiers and string values, but it is generated text,
   not a database migration. Review it against the target database dialect.
 - The browser preview is capped at 500 rows; transformations and exports still

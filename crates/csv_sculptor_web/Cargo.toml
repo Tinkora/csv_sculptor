@@ -1,6 +1,6 @@
 [package]
 name = "csv_sculptor_web"
-version = "0.1.0-alpha.2"
+version = "0.1.0-alpha.3"
 edition.workspace = true
 license.workspace = true
 repository.workspace = true
@@ -13,7 +13,7 @@ wasm-opt = false
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-csv_sculptor_core = { version = "0.1.0-alpha.2", path = "../csv_sculptor_core" }
+csv_sculptor_core = { version = "0.1.0-alpha.3", path = "../csv_sculptor_core" }
 wasm-bindgen.workspace = true
 js-sys.workspace = true
 serde.workspace = true

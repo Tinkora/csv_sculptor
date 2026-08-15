@@ -37,7 +37,9 @@
 
 - 应用不包含上传、分析、账户、持久化或网络 API。
 - 单元格使用 DOM `textContent` 渲染。
-- CSV/TSV 保留公式样式的前缀；导出对话框会提醒用户电子表格公式注入风险，而不能悄悄改变数据。
+- 公式检测针对解析后的字段而不是原始文本行。直接风险前缀覆盖 `=`、`+`、`-`、`@`、Tab、CR、LF 及其全角变体，依据 [OWASP CSV Injection](https://owasp.org/www-community/attacks/CSV_Injection)。
+- 检测还会跳过可选前导 ASCII 空格再次检查，因为 LibreOffice 的 [Trim spaces 导入选项](https://help.libreoffice.org/latest/en-US/text/shared/00/00000208.html) 可能移除这些空格。扫描器不会删除空格或修改字段值；RFC 4180 将空格视为字段内容。
+- CSV/TSV 保留公式样式的前缀并显示警告，而不会静默修改数据。[CWE-1236](https://cwe.mitre.org/data/definitions/1236.html) 指出不同电子表格产品的缓解效果不同，因此该警告不代表已经完成通用清洗。
 - SQL 使用引用后的标识符和值，但用户仍需针对目标数据库方言和权限模型审查生成文本。
 - MCP JSON 只是未来集成的 schema 草案，不代表已经提供 Agent-callable transport。
 
