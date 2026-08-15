@@ -102,3 +102,17 @@ fn formula_warning_covers_documented_prefixes_in_headers_and_rows() {
 
     assert_eq!(count_formula_like_cells(&table), 12);
 }
+
+#[test]
+fn formula_warning_uses_values_preserved_by_csv_parser() {
+    let table = parse_csv(
+        "\"＝header\",value\n\"  =row\",\"\tcommand\"\n\"\rcommand\",\"\ncommand\"\n",
+        true,
+    )
+    .unwrap();
+
+    assert_eq!(table.headers[0], "＝header");
+    assert_eq!(table.rows[0], ["  =row", "\tcommand"]);
+    assert_eq!(table.rows[1], ["\rcommand", "\ncommand"]);
+    assert_eq!(count_formula_like_cells(&table), 5);
+}
