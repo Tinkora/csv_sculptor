@@ -13,12 +13,12 @@ candidate, the browser workbench is deployed to GitHub Pages, and the release
 bundle includes checksums, an SPDX SBOM, a license inventory, and attestations.
 
 - **Try it:** [GitHub Pages](https://tinkora.github.io/csv_sculptor/)
-- **Latest candidate:** [v0.1.0-alpha.3 release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.3)
+- **Latest candidate:** [v0.1.0-alpha.4 release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.4)
 
 - **Local human interface:** implemented and covered by hosted Chromium smoke tests.
-- **Agent schema draft:** `skills/mcp-tools.json` documents possible tool shapes.
-- **Not Agent-callable:** no MCP server, hosted endpoint, authentication, or tool
-  registration is shipped.
+- **Local Agent interface:** `csv_sculptor_mcp` exposes five MCP tools over stdio.
+- **No hosted service:** the MCP server has no network transport, account, or
+  authentication requirement; input stays in the local process.
 
 ## Current Scope
 
@@ -31,6 +31,36 @@ bundle includes checksums, an SPDX SBOM, a license inventory, and attestations.
 - Export JSON, YAML, Markdown tables, SQL `INSERT`, CSV, or TSV.
 - Keep all imported data in the current browser tab.
 - Switch the workbench between English and Simplified Chinese.
+
+## Agent Integration
+
+Build the local MCP server from the repository root:
+
+```bash
+cargo build --release -p csv_sculptor_mcp --locked
+```
+
+Register the resulting `target/release/csv_sculptor_mcp` binary in an MCP
+client's local stdio configuration. The server exposes:
+
+| Tool | Purpose |
+| --- | --- |
+| `csv_sculptor_parse` | Parse bounded CSV/TSV text and return a structured table |
+| `csv_sculptor_filter` | Apply AND-combined filter conditions |
+| `csv_sculptor_sort` | Sort one table column numerically or as text |
+| `csv_sculptor_export` | Produce deterministic JSON, YAML, Markdown, SQL, CSV, or TSV text |
+| `csv_sculptor_detect_delimiter` | Inspect the delimiter without parsing a table |
+
+Transform and export tools accept a structured `table` object, so an Agent can
+chain calls without embedding JSON strings inside JSON. Every successful result
+uses the envelope `{ "schema_version": "1", "tool": "...", "data": ... }`.
+Invalid input is returned as an MCP tool error with a stable core error code.
+
+The raw CSV/TSV data limit is 10 MiB. The stdio JSON line limit is 64 MiB to
+allow escaped representations, and oversized lines are discarded before tool
+dispatch. The server writes diagnostics to stderr and protocol messages only to
+stdout. See [`skills/mcp-tools.json`](skills/mcp-tools.json) for the machine-
+readable catalog.
 
 Column selection and row limiting apply to both the browser preview and every
 export format. Reset restores the complete imported table.
@@ -104,7 +134,8 @@ artifacts are ignored and must not be committed.
 | --- | --- |
 | `crates/csv_sculptor_core` | Parsing, transformations, exports, and stable errors |
 | `crates/csv_sculptor_web` | Thin WASM boundary and browser workbench |
-| `skills/` | Draft Agent-facing workflow and tool schemas |
+| `crates/csv_sculptor_mcp` | Local stdio MCP server and bounded Agent tools |
+| `skills/` | Agent-facing workflow and machine-readable tool schemas |
 | `docs/` | Bilingual product contract |
 | `scripts/` | Offline repository contract checks |
 

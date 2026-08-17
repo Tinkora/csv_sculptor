@@ -37,7 +37,7 @@ jobs:
       contents: read
 
   build:
-    name: Build web bundle
+    name: Build release bundles
     needs: [validate, quality]
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -58,6 +58,9 @@ jobs:
       - name: Build web editor
         run: ./scripts/build_web.sh
 
+      - name: Build local MCP server
+        run: cargo +1.95 build --release --locked -p csv_sculptor_mcp
+
       - name: Package and checksum
         env:
           RELEASE_VERSION: ${{ inputs.version }}
@@ -66,6 +69,10 @@ jobs:
           tar -czf "release/csv_sculptor-${RELEASE_VERSION}-web.tar.gz" -C dist .
           sha256sum "release/csv_sculptor-${RELEASE_VERSION}-web.tar.gz" \
             > "release/csv_sculptor-${RELEASE_VERSION}-web.tar.gz.sha256"
+          cp target/release/csv_sculptor_mcp \
+            "release/csv_sculptor-${RELEASE_VERSION}-mcp-linux-x86_64"
+          sha256sum "release/csv_sculptor-${RELEASE_VERSION}-mcp-linux-x86_64" \
+            > "release/csv_sculptor-${RELEASE_VERSION}-mcp-linux-x86_64.sha256"
 
       - name: Upload web bundle
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -130,6 +137,8 @@ jobs:
           path: |
             dist/csv_sculptor-${{ inputs.version }}-web.tar.gz
             dist/csv_sculptor-${{ inputs.version }}-web.tar.gz.sha256
+            dist/csv_sculptor-${{ inputs.version }}-mcp-linux-x86_64
+            dist/csv_sculptor-${{ inputs.version }}-mcp-linux-x86_64.sha256
             dist/SHA256SUMS
             dist/sbom.spdx.json
             dist/license_inventory.json

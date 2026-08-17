@@ -6,6 +6,16 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+## [0.1.0-alpha.4] - 2026-08-17
+
+### MCP and Release
+
+- Published the local stdio MCP server and its five CSV/TSV Agent tools.
+- Added structured table inputs, versioned output envelopes, stable core error
+  codes, bounded JSON lines, and request validation for Agent callers.
+- Added a Linux x86_64 MCP binary to the reproducible release bundle with
+  checksums, SBOM, license inventory, and attestations.
+
 ## [0.1.0-alpha.3] - 2026-08-15
 
 ### Security
@@ -41,3 +51,4 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 [0.1.0-alpha.1]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.1
 [0.1.0-alpha.2]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.2
 [0.1.0-alpha.3]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.3
+[0.1.0-alpha.4]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.4

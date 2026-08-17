@@ -9,11 +9,11 @@ CSV Sculptor 是一个浏览器原生的 CSV/TSV 工作台，用于查看、筛�
 **Alpha。** 托管质量和发布工作流已通过，浏览器工作台已部署到 GitHub Pages，发布包包含 checksum、SPDX SBOM、许可证清单和构建证明。
 
 - **在线体验：** [GitHub Pages](https://tinkora.github.io/csv_sculptor/)
-- **最新候选版本：** [v0.1.0-alpha.3 Release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.3)
+- **最新候选版本：** [v0.1.0-alpha.4 Release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.4)
 
 - **本地人类界面：** 已实现，并由托管 Chromium smoke 测试覆盖。
-- **Agent schema 草案：** `skills/mcp-tools.json` 记录了可能的工具结构。
-- **尚不可由 Agent 调用：** 未提供 MCP server、托管端点、身份验证或工具注册。
+- **本地 Agent 界面：** `csv_sculptor_mcp` 通过 stdio 提供五个 MCP 工具。
+- **没有托管服务：** MCP server 不提供网络传输、账户或身份验证，输入只留在本地进程中。
 
 ## 当前范围
 
@@ -25,6 +25,34 @@ CSV Sculptor 是一个浏览器原生的 CSV/TSV 工作台，用于查看、筛�
 - 导出 JSON、YAML、Markdown 表格、SQL `INSERT`、CSV 或 TSV。
 - 所有导入数据仅保留在当前浏览器标签页中。
 - 工作台支持英文和简体中文切换。
+
+## Agent 集成
+
+在仓库根目录构建本地 MCP server：
+
+```bash
+cargo build --release -p csv_sculptor_mcp --locked
+```
+
+将生成的 `target/release/csv_sculptor_mcp` 注册到 MCP 客户端的本地 stdio
+配置中。server 提供以下工具：
+
+| 工具 | 用途 |
+| --- | --- |
+| `csv_sculptor_parse` | 解析有大小限制的 CSV/TSV 文本并返回结构化表格 |
+| `csv_sculptor_filter` | 使用 AND 语义组合筛选条件 |
+| `csv_sculptor_sort` | 按数值或文本排序一列 |
+| `csv_sculptor_export` | 生成确定性的 JSON、YAML、Markdown、SQL、CSV 或 TSV 文本 |
+| `csv_sculptor_detect_delimiter` | 检查分隔符而不解析表格 |
+
+转换和导出工具接收结构化的 `table` 对象，因此 Agent 可以直接串联调用，
+不需要在 JSON 中再次嵌入 JSON 字符串。每个成功结果都使用
+`{ "schema_version": "1", "tool": "...", "data": ... }` envelope；无效输入
+会作为 MCP tool error 返回稳定的 core 错误码。
+
+原始 CSV/TSV 数据上限为 10 MiB。stdio JSON 行上限为 64 MiB，以容纳转义后的
+表示；超长行会在工具分发前丢弃。server 将诊断写入 stderr，只把协议消息写入
+stdout。机器可读目录见 [`skills/mcp-tools.json`](skills/mcp-tools.json)。
 
 列选择和行数限制同时作用于浏览器预览及所有导出格式；重置会恢复完整的导入表格。
 
@@ -91,7 +119,8 @@ RustSec advisory 扫描，避免重复请求 registry API。
 | --- | --- |
 | `crates/csv_sculptor_core` | 解析、转换、导出和稳定错误 |
 | `crates/csv_sculptor_web` | 精简 WASM 边界和浏览器工作台 |
-| `skills/` | 面向 Agent 的工作流和工具 schema 草案 |
+| `crates/csv_sculptor_mcp` | 本地 stdio MCP server 和有界 Agent 工具 |
+| `skills/` | 面向 Agent 的工作流和机器可读工具 schema |
 | `docs/` | 双语产品契约 |
 | `scripts/` | 离线仓库契约检查 |
 
