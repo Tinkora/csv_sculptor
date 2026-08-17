@@ -41,3 +41,6 @@ jobs:
 
       - name: Check workflow contracts
         run: ruby scripts/check_workflow_contracts.rb
+
+      - name: Test local MCP stdio contract
+        run: python3 scripts/test_mcp_stdio.py
