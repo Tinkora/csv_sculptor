@@ -6,6 +6,13 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+### Added
+
+- Local `csv_sculptor_mcp` stdio server with parse, filter, sort, export, and
+  delimiter-detection tools.
+- Structured table inputs, versioned output envelopes, stable core error codes,
+  bounded JSON lines, and request validation for Agent callers.
+
 ## [0.1.0-alpha.3] - 2026-08-15
 
 ### Security

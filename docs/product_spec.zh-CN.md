@@ -21,6 +21,17 @@
 4. 用户可以组合筛选、排序、选择列、限制行数、去重或重置到原始输入。
 5. 用户检查后复制或下载 JSON、YAML、Markdown、SQL、CSV 或 TSV。
 
+## Agent 工作流
+
+1. 构建 `csv_sculptor_mcp`，并将二进制注册为本地 MCP stdio server。
+2. 使用有界 UTF-8 文本调用 `csv_sculptor_parse`。
+3. 将返回的结构化 `table` 直接传给 `csv_sculptor_filter`、
+   `csv_sculptor_sort` 或 `csv_sculptor_export`。
+4. 在使用生成文本前检查版本化输出 envelope 和所有导出警告。
+
+该 server 不提供托管传输、身份验证、持久化或网络访问。诊断写入 stderr，
+协议 JSON 只写入 stdout。
+
 ## 行为契约
 
 - 输入上限为 10 MiB，且必须是有效 UTF-8。
@@ -32,6 +43,10 @@
 - 预览最多显示 500 行，但导出使用全部当前结果。
 - 用户明确设置的列选择和行数限制同时作用于预览和导出。
 - 所有导出都必须具有确定性，并保持输入字段顺序。
+- Agent 结果使用 `{ "schema_version": "1", "tool": "...", "data": ... }` envelope。
+- Agent 表格输入必须有唯一且非空的表头、统一的行宽、受支持的分隔符，
+  且单元格数据总大小不得超过 10 MiB。
+- MCP stdio JSON 行上限为 64 MiB；超长行会在工具分发前丢弃。
 
 ## 安全与隐私
 
@@ -41,16 +56,17 @@
 - 检测还会跳过可选前导 ASCII 空格再次检查，因为 LibreOffice 的 [Trim spaces 导入选项](https://help.libreoffice.org/latest/en-US/text/shared/00/00000208.html) 可能移除这些空格。扫描器不会删除空格或修改字段值；RFC 4180 将空格视为字段内容。
 - CSV/TSV 保留公式样式的前缀并显示警告，而不会静默修改数据。[CWE-1236](https://cwe.mitre.org/data/definitions/1236.html) 指出不同电子表格产品的缓解效果不同，因此该警告不代表已经完成通用清洗。
 - SQL 使用引用后的标识符和值，但用户仍需针对目标数据库方言和权限模型审查生成文本。
-- MCP JSON 只是未来集成的 schema 草案，不代表已经提供 Agent-callable transport。
+- 本地 stdio MCP server 已可由 Agent 调用；`skills/mcp-tools.json` 记录五个已注册工具。
+  当前不提供托管端点或身份验证。
 
 ## 非目标
 
 - XLSX、图表、协作编辑、云存储或分享链接。
-- 超过 10 MiB 的流式处理。
+- 超过 10 MiB 的流式处理或托管 MCP 服务。
 - 自动执行 SQL 或自动打开电子表格文件。
 - 在没有具体用户证据前加入正则表达式、多层查询构建器或持久化项目。
 
-## Draft 验收门槛
+## Alpha 验收门槛
 
 - Native Rust 的格式、测试和 Clippy 通过。
 - `wasm32-unknown-unknown` 编译和真实 `wasm-pack` 构建通过。
@@ -58,4 +74,5 @@
 - 中英文文档配对，公开能力声明与实现一致。
 - 依赖审计和 GitHub Actions 静态检查通过。
 
-只有精确候选 commit 的托管检查全部通过后，才能将成熟度从 Draft 提升为 Alpha。
+Alpha 发布要求精确候选 commit 通过托管质量、供应链、文档和浏览器检查；
+MCP 行为还必须通过本地工具和有界 stdio 测试。

@@ -28,6 +28,19 @@ workbench that runs locally in the browser.
    the imported data.
 5. Review and copy or download JSON, YAML, Markdown, SQL, CSV, or TSV.
 
+## Agent Workflow
+
+1. Build `csv_sculptor_mcp` and register the binary as a local MCP stdio server.
+2. Call `csv_sculptor_parse` with bounded UTF-8 text.
+3. Pass the returned structured `table` directly to `csv_sculptor_filter`,
+   `csv_sculptor_sort`, or `csv_sculptor_export`.
+4. Inspect the versioned output envelope and any export warnings before using
+   generated text.
+
+The server does not provide hosted transport, authentication, persistence, or
+network access. It writes diagnostics to stderr and keeps protocol JSON on
+stdout.
+
 ## Behavioral Contract
 
 - Input is valid UTF-8 and no larger than 10 MiB.
@@ -41,6 +54,11 @@ workbench that runs locally in the browser.
 - The preview shows at most 500 rows while export uses the full current result.
 - Explicit column selection and row limits apply to both preview and export.
 - Exports are deterministic and preserve field order.
+- Agent results use the envelope `{ "schema_version": "1", "tool": "...", "data": ... }`.
+- Agent table inputs must have unique non-blank headers, consistent row widths,
+  a supported delimiter, and a total cell-data size no larger than 10 MiB.
+- MCP stdio JSON lines are capped at 64 MiB; over-limit lines are discarded
+  before tool dispatch.
 
 ## Security and Privacy
 
@@ -59,17 +77,18 @@ workbench that runs locally in the browser.
   universal sanitization.
 - SQL output quotes identifiers and values, but users must still review it for
   the target database dialect and permission model.
-- The MCP JSON file is a future integration schema, not an Agent-callable transport.
+- The local stdio MCP server is Agent-callable; `skills/mcp-tools.json` documents
+  its five registered tools. No hosted endpoint or authentication is provided.
 
 ## Non-Goals
 
 - XLSX, charts, collaborative editing, cloud storage, or share links.
-- Streaming files larger than 10 MiB.
+- Streaming files larger than 10 MiB or a hosted MCP service.
 - Automatically executing SQL or opening spreadsheet files.
 - Regular-expression filters, nested query builders, or persisted projects
   without concrete user evidence.
 
-## Draft Acceptance Gate
+## Alpha Acceptance Gate
 
 - Native Rust formatting, tests, and Clippy pass.
 - `wasm32-unknown-unknown` compilation and a real `wasm-pack` build pass.
@@ -78,5 +97,6 @@ workbench that runs locally in the browser.
 - English and Chinese documentation are paired and public claims match behavior.
 - Dependency audits and GitHub Actions static analysis pass.
 
-Maturity can move from Draft to Alpha only after hosted checks pass for the
-exact candidate commit.
+Alpha releases require the hosted quality, supply-chain, documentation, and
+browser checks to pass for the exact candidate commit. MCP behavior additionally
+requires the local tool and bounded-stdio tests to pass.

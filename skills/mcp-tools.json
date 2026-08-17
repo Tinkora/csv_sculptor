@@ -1,22 +1,33 @@
 {
   "name": "csv_sculptor",
-  "version": "0.1.0",
-  "description": "Draft schemas for a future CSV Sculptor Agent transport. This repository does not ship an MCP server or tool registration.",
+  "version": "1",
+  "description": "Registered tools for the local csv_sculptor_mcp stdio server.",
+  "transport": {
+    "type": "stdio",
+    "command": "csv_sculptor_mcp",
+    "network": "none",
+    "max_input_bytes": 10485760,
+    "max_message_bytes": 67108864
+  },
+  "output_envelope": {
+    "schema_version": "1",
+    "required": ["schema_version", "tool", "data"]
+  },
   "tools": [
     {
       "name": "csv_sculptor_parse",
-      "description": "Parse a CSV/TSV string into a structured table. Auto-detects delimiter (comma, tab, pipe, semicolon) and optionally detects whether the first row is a header.",
+      "description": "Parse bounded UTF-8 CSV/TSV text into a structured table. Auto-detects comma, tab, pipe, or semicolon delimiters.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "input": {
             "type": "string",
-            "description": "Raw CSV/TSV text content to parse."
+            "description": "Raw UTF-8 CSV/TSV text, no larger than 10 MiB."
           },
           "has_header": {
             "type": "boolean",
             "default": true,
-            "description": "Whether the first row should be treated as a header. Set to false to auto-detect."
+            "description": "Treat the first row as headers."
           }
         },
         "required": ["input"],
@@ -25,81 +36,109 @@
     },
     {
       "name": "csv_sculptor_filter",
-      "description": "Apply one or more filter conditions to a CsvTable. All conditions must match (AND logic). Supports 9 operators: Equals, NotEquals, Contains, StartsWith, EndsWith, GreaterThan, LessThan, IsEmpty, IsNotEmpty.",
+      "description": "Filter a structured table with AND-combined conditions.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "table_json": {
-            "type": "string",
-            "description": "Serialized CsvTable JSON from csv_sculptor_parse."
-          },
-          "conditions_json": {
-            "type": "string",
-            "description": "JSON array of filter conditions, each with 'column', 'operator', and optional 'value'."
+          "table": { "$ref": "#/$defs/TableInput" },
+          "conditions": {
+            "type": "array",
+            "items": { "$ref": "#/$defs/FilterCondition" }
           }
         },
-        "required": ["table_json", "conditions_json"],
-        "additionalProperties": false
+        "required": ["table", "conditions"],
+        "additionalProperties": false,
+        "$defs": {
+          "TableInput": {
+            "type": "object",
+            "properties": {
+              "headers": { "type": "array", "items": { "type": "string" } },
+              "rows": { "type": "array", "items": { "type": "array", "items": { "type": "string" } } },
+              "delimiter": { "type": "string", "minLength": 1, "maxLength": 1 },
+              "row_count": { "type": "integer", "minimum": 0 }
+            },
+            "required": ["headers", "rows", "delimiter", "row_count"],
+            "additionalProperties": false
+          },
+          "FilterCondition": {
+            "type": "object",
+            "properties": {
+              "column": { "type": "string" },
+              "operator": {
+                "type": "string",
+                "enum": ["Equals", "NotEquals", "Contains", "StartsWith", "EndsWith", "GreaterThan", "LessThan", "IsEmpty", "IsNotEmpty"]
+              },
+              "value": { "type": "string", "default": "" }
+            },
+            "required": ["column", "operator"],
+            "additionalProperties": false
+          }
+        }
       }
     },
     {
       "name": "csv_sculptor_sort",
-      "description": "Sort a CsvTable by a specified column, ascending or descending. Numeric columns are sorted by numeric value; text columns lexicographically.",
+      "description": "Sort a structured table by one column, numerically when possible and otherwise case-insensitive text.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "table_json": {
-            "type": "string",
-            "description": "Serialized CsvTable JSON."
-          },
-          "column": {
-            "type": "string",
-            "description": "Column name to sort by."
-          },
-          "ascending": {
-            "type": "boolean",
-            "default": true,
-            "description": "Sort direction: true for ascending, false for descending."
-          }
+          "table": { "$ref": "#/$defs/TableInput" },
+          "column": { "type": "string" },
+          "ascending": { "type": "boolean", "default": true }
         },
-        "required": ["table_json", "column"],
-        "additionalProperties": false
+        "required": ["table", "column"],
+        "additionalProperties": false,
+        "$defs": {
+          "TableInput": {
+            "type": "object",
+            "properties": {
+              "headers": { "type": "array", "items": { "type": "string" } },
+              "rows": { "type": "array", "items": { "type": "array", "items": { "type": "string" } } },
+              "delimiter": { "type": "string", "minLength": 1, "maxLength": 1 },
+              "row_count": { "type": "integer", "minimum": 0 }
+            },
+            "required": ["headers", "rows", "delimiter", "row_count"],
+            "additionalProperties": false
+          }
+        }
       }
     },
     {
       "name": "csv_sculptor_export",
-      "description": "Export a CsvTable to a specified format. Supported formats: json, yaml, markdown, sql, csv, tsv.",
+      "description": "Export a structured table to deterministic JSON, YAML, Markdown, SQL, CSV, or TSV text.",
       "inputSchema": {
         "type": "object",
         "properties": {
-          "table_json": {
-            "type": "string",
-            "description": "Serialized CsvTable JSON."
-          },
-          "format": {
-            "type": "string",
-            "enum": ["json", "yaml", "markdown", "sql", "csv", "tsv"],
-            "description": "Target export format."
-          },
-          "table_name": {
-            "type": "string",
-            "default": "table_name",
-            "description": "Table name used for SQL INSERT format."
-          }
+          "table": { "$ref": "#/$defs/TableInput" },
+          "format": { "type": "string", "enum": ["json", "yaml", "markdown", "sql", "csv", "tsv"] },
+          "table_name": { "type": "string", "default": "table_name" }
         },
-        "required": ["table_json", "format"],
-        "additionalProperties": false
+        "required": ["table", "format"],
+        "additionalProperties": false,
+        "$defs": {
+          "TableInput": {
+            "type": "object",
+            "properties": {
+              "headers": { "type": "array", "items": { "type": "string" } },
+              "rows": { "type": "array", "items": { "type": "array", "items": { "type": "string" } } },
+              "delimiter": { "type": "string", "minLength": 1, "maxLength": 1 },
+              "row_count": { "type": "integer", "minimum": 0 }
+            },
+            "required": ["headers", "rows", "delimiter", "row_count"],
+            "additionalProperties": false
+          }
+        }
       }
     },
     {
       "name": "csv_sculptor_detect_delimiter",
-      "description": "Detect the delimiter character used in a CSV/TSV string. Returns one of: comma (,), tab (\\t), pipe (|), or semicolon (;).",
+      "description": "Detect the delimiter used in bounded UTF-8 CSV/TSV text without returning a table.",
       "inputSchema": {
         "type": "object",
         "properties": {
           "input": {
             "type": "string",
-            "description": "Raw CSV/TSV text content to analyze."
+            "description": "Raw UTF-8 CSV/TSV text to inspect."
           }
         },
         "required": ["input"],
