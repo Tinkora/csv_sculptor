@@ -8,7 +8,7 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ## [0.1.0-alpha.4] - 2026-08-17
 
-### Added
+### MCP and Release
 
 - Published the local stdio MCP server and its five CSV/TSV Agent tools.
 - Added structured table inputs, versioned output envelopes, stable core error
