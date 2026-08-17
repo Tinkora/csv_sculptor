@@ -1,0 +1,29 @@
+[package]
+name = "csv_sculptor_mcp"
+version = "0.1.0-alpha.3"
+description = "Local stdio MCP server for CSV Sculptor"
+publish = false
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "csv_sculptor_mcp"
+path = "src/main.rs"
+
+[dependencies]
+csv_sculptor_core = { version = "0.1.0-alpha.3", path = "../csv_sculptor_core" }
+futures-util = "0.3"
+rmcp = { version = "3.1.2", default-features = false, features = [
+    "server",
+    "macros",
+    "schemars",
+    "transport-async-rw",
+    "transport-io",
+] }
+schemars = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1", features = ["io-std", "macros", "rt-multi-thread"] }
+tokio-util = { version = "0.7", features = ["codec"] }

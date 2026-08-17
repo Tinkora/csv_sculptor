@@ -1,5 +1,9 @@
 [workspace]
-members = ["crates/csv_sculptor_core", "crates/csv_sculptor_web"]
+members = [
+    "crates/csv_sculptor_core",
+    "crates/csv_sculptor_web",
+    "crates/csv_sculptor_mcp",
+]
 resolver = "3"
 
 [workspace.package]
