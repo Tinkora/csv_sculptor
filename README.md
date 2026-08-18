@@ -13,7 +13,7 @@ candidate, the browser workbench is deployed to GitHub Pages, and the release
 bundle includes checksums, an SPDX SBOM, a license inventory, and attestations.
 
 - **Try it:** [GitHub Pages](https://tinkora.github.io/csv_sculptor/)
-- **Latest candidate:** [v0.1.0-alpha.4 release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.4)
+- **Latest candidate:** [v0.1.0-alpha.5 release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.5)
 
 - **Local human interface:** implemented and covered by hosted Chromium smoke tests.
 - **Local Agent interface:** `csv_sculptor_mcp` exposes five MCP tools over stdio.
@@ -22,8 +22,11 @@ bundle includes checksums, an SPDX SBOM, a license inventory, and attestations.
 
 ## Current Scope
 
-- Parse UTF-8 CSV, TSV, pipe-delimited, and semicolon-delimited text up to
-  10 MiB, including quoted fields.
+- Import browser files as UTF-8, UTF-16 LE/BE, or Windows-1252 text up to 10
+  MiB, with BOM detection and strict decoding; pasted and MCP input remains
+  UTF-8.
+- Parse CSV, TSV, pipe-delimited, and semicolon-delimited text, including
+  quoted fields.
 - Reject blank or duplicate headers and inconsistent row widths.
 - Filter with nine operators and combine active filters with AND semantics.
 - Sort numeric columns numerically and other columns case-insensitively.
@@ -67,7 +70,10 @@ export format. Reset restores the complete imported table.
 
 ## Safety Boundaries
 
-- Input is decoded as UTF-8 and never sent by the application to a server.
+- Browser file decoding happens locally. Auto mode recognizes UTF-16 BOMs and
+  otherwise uses strict UTF-8; other supported encodings must be selected
+  explicitly, and malformed bytes are rejected instead of replaced. Pasted
+  text and MCP input use UTF-8.
 - The preview renders cell values with `textContent`, not HTML.
 - CSV/TSV exports preserve cell values. The export dialog warns when a parsed
   field begins, after optional ASCII spaces, with an ASCII or full-width formula

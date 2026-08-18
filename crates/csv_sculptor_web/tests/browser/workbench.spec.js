@@ -28,6 +28,41 @@ test("loads, filters, sorts, and exports through the real WASM boundary", async 
   await expect(page.getByLabel("Generated output")).toHaveValue(/"agent": "executor"/);
 });
 
+test("auto-detects a UTF-16LE CSV from its BOM", async ({ page }) => {
+  await page.goto("/static/");
+  await expect(page.getByText("Ready", { exact: true })).toBeVisible();
+
+  const content = Buffer.from("name,value\nAda,37\n", "utf16le");
+  const bytes = Buffer.concat([Buffer.from([0xff, 0xfe]), content]);
+  await page.locator("#file-input").setInputFiles({
+    name: "sample-utf16.csv",
+    mimeType: "text/csv",
+    buffer: bytes,
+  });
+
+  await expect(page.getByText("Loaded 1 rows and 2 columns.")).toBeVisible();
+  await expect(page.locator("tbody")).toContainText("Ada");
+});
+
+test("imports a Windows-1252 CSV when the encoding is selected", async ({ page }) => {
+  await page.goto("/static/");
+  await expect(page.getByText("Ready", { exact: true })).toBeVisible();
+
+  const bytes = Buffer.from([
+    0x6e, 0x61, 0x6d, 0x65, 0x2c, 0x63, 0x69, 0x74, 0x79, 0x0a,
+    0x4a, 0x6f, 0x73, 0xe9, 0x2c, 0x50, 0x61, 0x72, 0x69, 0x73, 0x0a,
+  ]);
+  await page.getByLabel("File encoding").selectOption("windows-1252");
+  await page.locator("#file-input").setInputFiles({
+    name: "sample-windows1252.csv",
+    mimeType: "text/csv",
+    buffer: bytes,
+  });
+
+  await expect(page.getByText("Loaded 1 rows and 2 columns.")).toBeVisible();
+  await expect(page.locator("tbody")).toContainText("José");
+});
+
 test("warns before exporting spreadsheet formula-like cells", async ({ page }) => {
   await page.goto("/static/");
   await expect(page.getByText("Ready", { exact: true })).toBeVisible();

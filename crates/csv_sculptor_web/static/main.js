@@ -4,21 +4,21 @@ const MAX_PREVIEW_ROWS = 500;
 const messages = {
   en: {
     skip: 'Skip to workbench', tagline: 'Local CSV and TSV inspection without uploads.', loading: 'Loading', ready: 'Ready', failed: 'Unavailable',
-    open_file: 'Open file', paste: 'Paste', sample: 'Load sample', header_row: 'First row is a header', row_limit: 'Maximum rows', deduplicate: 'Deduplicate', reset: 'Reset', export: 'Export',
-    drop_title: 'Drop a CSV or TSV file here', drop_help: 'or use Open file or Paste. UTF-8 text up to 10 MiB.', rows: 'rows', columns: 'columns', delimiter: 'delimiter',
+    open_file: 'Open file', file_encoding: 'File encoding', encoding_auto: 'Auto (BOM or UTF-8)', encoding_utf8: 'UTF-8', encoding_utf16le: 'UTF-16 LE', encoding_utf16be: 'UTF-16 BE', encoding_windows1252: 'Windows-1252', paste: 'Paste', sample: 'Load sample', header_row: 'First row is a header', row_limit: 'Maximum rows', deduplicate: 'Deduplicate', reset: 'Reset', export: 'Export',
+    drop_title: 'Drop a CSV or TSV file here', drop_help: 'or use Open file or Paste. UTF-8, UTF-16, or Windows-1252 text up to 10 MiB.', rows: 'rows', columns: 'columns', delimiter: 'delimiter',
     paste_title: 'Paste CSV or TSV', paste_help: 'Input stays in this browser tab.', paste_label: 'CSV or TSV input', cancel: 'Cancel', import: 'Import',
     export_title: 'Export data', export_help: 'Review generated text before copying or downloading it.', format: 'Format', table_name: 'Table name', output: 'Generated output', close: 'Close', copy: 'Copy', download: 'Download', formula_warning: '{count} cell(s) may be interpreted as spreadsheet formulas after optional leading spaces. Review before opening the export.',
     filters: 'Column filters', visible_columns: 'Visible columns', show_column: 'Show', column_word: 'column', filter_value: 'Filter value', all: 'No filter', equals: 'Equals', not_equals: 'Not equals', contains: 'Contains', starts: 'Starts with', ends: 'Ends with', greater: 'Greater than', less: 'Less than', empty: 'Is empty', not_empty: 'Is not empty',
-    engine_failed: 'The WASM processing engine could not be loaded. Reload the page or rebuild the package.', empty_input: 'Paste CSV or TSV data before importing.', invalid_utf8: 'The selected file is not valid UTF-8.', too_large: 'Input exceeds the 10 MiB limit.', loaded: 'Loaded {rows} rows and {columns} columns.', preview: 'Previewing the first {rows} rows.', copied: 'Output copied.', downloaded: 'Download started.', reset_done: 'Original data restored.', deduplicated: 'Duplicate rows removed.', export_failed: 'Export failed: {error}', parse_failed: 'Parse failed: {error}', file_failed: 'The file could not be read.', filter_failed: 'Filter failed: {error}', sort_failed: 'Sort failed: {error}', column_hidden: 'At least one column must remain visible.', invalid_row_limit: 'Maximum rows must be a positive whole number.',
+    engine_failed: 'The WASM processing engine could not be loaded. Reload the page or rebuild the package.', empty_input: 'Paste CSV or TSV data before importing.', invalid_encoding: 'The file could not be decoded with the selected encoding.', too_large: 'Input exceeds the 10 MiB limit.', loaded: 'Loaded {rows} rows and {columns} columns.', preview: 'Previewing the first {rows} rows.', copied: 'Output copied.', downloaded: 'Download started.', reset_done: 'Original data restored.', deduplicated: 'Duplicate rows removed.', export_failed: 'Export failed: {error}', parse_failed: 'Parse failed: {error}', file_failed: 'The file could not be read.', filter_failed: 'Filter failed: {error}', sort_failed: 'Sort failed: {error}', column_hidden: 'At least one column must remain visible.', invalid_row_limit: 'Maximum rows must be a positive whole number.',
   },
   zh: {
     skip: '跳到工作台', tagline: '本地检查 CSV 和 TSV，不上传数据。', loading: '加载中', ready: '就绪', failed: '不可用',
-    open_file: '打开文件', paste: '粘贴', sample: '加载示例', header_row: '第一行是表头', row_limit: '最大行数', deduplicate: '去重', reset: '重置', export: '导出',
-    drop_title: '将 CSV 或 TSV 文件拖放到此处', drop_help: '也可使用“打开文件”或“粘贴”。支持最大 10 MiB 的 UTF-8 文本。', rows: '行', columns: '列', delimiter: '分隔符',
+    open_file: '打开文件', file_encoding: '文件编码', encoding_auto: '自动（BOM 或 UTF-8）', encoding_utf8: 'UTF-8', encoding_utf16le: 'UTF-16 LE', encoding_utf16be: 'UTF-16 BE', encoding_windows1252: 'Windows-1252', paste: '粘贴', sample: '加载示例', header_row: '第一行是表头', row_limit: '最大行数', deduplicate: '去重', reset: '重置', export: '导出',
+    drop_title: '将 CSV 或 TSV 文件拖放到此处', drop_help: '也可使用“打开文件”或“粘贴”。支持最大 10 MiB 的 UTF-8、UTF-16 或 Windows-1252 文本。', rows: '行', columns: '列', delimiter: '分隔符',
     paste_title: '粘贴 CSV 或 TSV', paste_help: '输入只保留在当前浏览器标签页。', paste_label: 'CSV 或 TSV 输入', cancel: '取消', import: '导入',
     export_title: '导出数据', export_help: '复制或下载前先检查生成内容。', format: '格式', table_name: '表名', output: '生成结果', close: '关闭', copy: '复制', download: '下载', formula_warning: '有 {count} 个单元格在可选前导空格后可能被电子表格解释为公式。打开导出文件前请先检查。',
     filters: '列筛选', visible_columns: '可见列', show_column: '显示', column_word: '列', filter_value: '筛选值', all: '不筛选', equals: '等于', not_equals: '不等于', contains: '包含', starts: '开头是', ends: '结尾是', greater: '大于', less: '小于', empty: '为空', not_empty: '非空',
-    engine_failed: 'WASM 处理引擎加载失败。请刷新页面或重新构建 package。', empty_input: '请先粘贴 CSV 或 TSV 数据。', invalid_utf8: '所选文件不是有效的 UTF-8。', too_large: '输入超过 10 MiB 限制。', loaded: '已加载 {rows} 行、{columns} 列。', preview: '仅预览前 {rows} 行。', copied: '已复制输出。', downloaded: '已开始下载。', reset_done: '已恢复原始数据。', deduplicated: '已移除重复行。', export_failed: '导出失败：{error}', parse_failed: '解析失败：{error}', file_failed: '无法读取文件。', filter_failed: '筛选失败：{error}', sort_failed: '排序失败：{error}', column_hidden: '至少保留一列可见。', invalid_row_limit: '最大行数必须是正整数。',
+    engine_failed: 'WASM 处理引擎加载失败。请刷新页面或重新构建 package。', empty_input: '请先粘贴 CSV 或 TSV 数据。', invalid_encoding: '无法使用所选编码解码文件。', too_large: '输入超过 10 MiB 限制。', loaded: '已加载 {rows} 行、{columns} 列。', preview: '仅预览前 {rows} 行。', copied: '已复制输出。', downloaded: '已开始下载。', reset_done: '已恢复原始数据。', deduplicated: '已移除重复行。', export_failed: '导出失败：{error}', parse_failed: '解析失败：{error}', file_failed: '无法读取文件。', filter_failed: '筛选失败：{error}', sort_failed: '排序失败：{error}', column_hidden: '至少保留一列可见。', invalid_row_limit: '最大行数必须是正整数。',
   },
 };
 
@@ -214,7 +214,21 @@ function downloadExport() { const extensions = { csv: 'csv', tsv: 'tsv', json_pr
 
 async function readFile(file) {
   if (file.size > MAX_INPUT_BYTES) { setError('too_large'); return; }
-  try { const bytes = await file.arrayBuffer(); const text = new TextDecoder('utf-8', { fatal: true }).decode(bytes); loadText(text); } catch (error) { setError(error instanceof TypeError ? 'invalid_utf8' : 'file_failed'); }
+  try {
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const selectedEncoding = byId('file-encoding').value;
+    const encoding = selectedEncoding === 'auto' ? detectEncoding(bytes) : selectedEncoding;
+    const text = new TextDecoder(encoding, { fatal: true }).decode(bytes);
+    loadText(text);
+  } catch (error) {
+    setError(error instanceof TypeError ? 'invalid_encoding' : 'file_failed');
+  }
+}
+
+function detectEncoding(bytes) {
+  if (bytes[0] === 0xff && bytes[1] === 0xfe) return 'utf-16le';
+  if (bytes[0] === 0xfe && bytes[1] === 0xff) return 'utf-16be';
+  return 'utf-8';
 }
 
 byId('file-input').addEventListener('change', (event) => { const file = event.target.files[0]; if (file) readFile(file); event.target.value = ''; });

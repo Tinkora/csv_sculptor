@@ -17,16 +17,23 @@ workbench that runs locally in the browser.
   configuration file, or script.
 - Keep private input away from third-party services.
 - Make encoding, size, spreadsheet-formula, and SQL-dialect boundaries explicit.
+- Support the encoding choices that commonly appear in spreadsheet and Agent
+  batch workflows. OpenAI Codex's merged [`spawn_agents_on_csv` workflow](https://github.com/openai/codex/pull/10935)
+  treats CSV as a first-class Agent work manifest, while reports such as
+  [Directus #12970](https://github.com/directus/directus/issues/12970) show
+  that Excel-generated UTF-8 BOM files can break downstream imports.
 
 ## Current User Flow
 
-1. Drop a UTF-8 file, choose a file, paste text, or load the sample.
-2. Detect comma, tab, pipe, or semicolon and apply the selected header-row mode.
-3. Show row and column counts, delimiter, column filters, sortable headers,
+1. Drop or choose a file, select an encoding, paste UTF-8 text, or load the sample.
+2. Auto-detect UTF-16 BOMs or explicitly choose UTF-8, UTF-16 LE/BE, or
+   Windows-1252 before decoding a browser file.
+3. Detect comma, tab, pipe, or semicolon and apply the selected header-row mode.
+4. Show row and column counts, delimiter, column filters, sortable headers,
    column selection, and a maximum-row control.
-4. Combine filters, sort, select columns, limit rows, deduplicate, or reset to
+5. Combine filters, sort, select columns, limit rows, deduplicate, or reset to
    the imported data.
-5. Review and copy or download JSON, YAML, Markdown, SQL, CSV, or TSV.
+6. Review and copy or download JSON, YAML, Markdown, SQL, CSV, or TSV.
 
 ## Agent Workflow
 
@@ -43,7 +50,11 @@ stdout.
 
 ## Behavioral Contract
 
-- Input is valid UTF-8 and no larger than 10 MiB.
+- Pasted text and MCP input are valid UTF-8 and no larger than 10 MiB; browser
+  file bytes follow the encoding rule below.
+- Browser file imports may use UTF-8, UTF-16 LE/BE, or Windows-1252. Auto mode
+  recognizes UTF-16 BOMs and otherwise uses strict UTF-8; malformed bytes are
+  rejected rather than replaced. Pasted text and MCP input remain UTF-8.
 - Header mode rejects blank or duplicate header names.
 - Rows with inconsistent field counts are rejected.
 - Active filters use AND semantics.
@@ -63,6 +74,9 @@ stdout.
 ## Security and Privacy
 
 - The application has no upload, analytics, account, persistence, or network API.
+- File decoding is performed locally with an explicit supported encoding; the
+  application does not guess arbitrary legacy encodings or silently repair
+  invalid bytes.
 - Cells are rendered with DOM `textContent`.
 - Formula detection runs on parsed fields, not raw lines. Direct prefixes cover
   `=`, `+`, `-`, `@`, tab, carriage return, line feed, and their full-width
