@@ -9,7 +9,7 @@ CSV Sculptor 是一个浏览器原生的 CSV/TSV 工作台，用于查看、筛�
 **Alpha。** 托管质量和发布工作流已通过，浏览器工作台已部署到 GitHub Pages，发布包包含 checksum、SPDX SBOM、许可证清单和构建证明。
 
 - **在线体验：** [GitHub Pages](https://tinkora.github.io/csv_sculptor/)
-- **最新候选版本：** [v0.1.0-alpha.4 Release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.4)
+- **最新候选版本：** [v0.1.0-alpha.5 Release](https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.5)
 
 - **本地人类界面：** 已实现，并由托管 Chromium smoke 测试覆盖。
 - **本地 Agent 界面：** `csv_sculptor_mcp` 通过 stdio 提供五个 MCP 工具。
@@ -17,7 +17,8 @@ CSV Sculptor 是一个浏览器原生的 CSV/TSV 工作台，用于查看、筛�
 
 ## 当前范围
 
-- 解析最大 10 MiB 的 UTF-8 CSV、TSV、竖线和分号分隔文本，包括带引号字段。
+- 浏览器文件支持最大 10 MiB 的 UTF-8、UTF-16 LE/BE 或 Windows-1252 文本；自动模式识别 BOM，并严格解码；粘贴和 MCP 输入仍要求 UTF-8。
+- 解析 CSV、TSV、竖线和分号分隔文本，包括带引号字段。
 - 拒绝空白或重复表头以及列数不一致的行。
 - 使用九种运算符筛选，并以 AND 语义组合所有启用的筛选条件。
 - 数字列按数值排序，其他列按不区分大小写的文本排序。
@@ -58,7 +59,7 @@ stdout。机器可读目录见 [`skills/mcp-tools.json`](skills/mcp-tools.json)�
 
 ## 安全边界
 
-- 输入按 UTF-8 解码，应用不会把输入发送到服务器。
+- 浏览器文件解码只在本地完成。自动模式识别 UTF-16 BOM，否则使用严格 UTF-8；其他支持的编码必须明确选择，非法字节会被拒绝而不会被静默替换。粘贴和 MCP 输入使用 UTF-8。
 - 预览使用 `textContent` 而不是 HTML 渲染单元格内容。
 - CSV/TSV 导出保留原始单元格值。导出对话框会按安全策略检查解析后的字段：跳过可选 ASCII 空格后，如果字段以 ASCII 或全角公式前缀开头就显示警告。工具不会改写数据；使用电子表格软件打开不可信导出前必须检查内容。
 - SQL 输出会引用标识符和字符串，但它是生成的文本，不是数据库迁移；应按目标数据库方言复核。

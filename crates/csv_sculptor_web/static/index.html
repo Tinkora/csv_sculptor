@@ -30,6 +30,16 @@
         <div class="toolbar-group">
           <label class="button primary" for="file-input" data-i18n="open_file">Open file</label>
           <input id="file-input" class="visually-hidden" type="file" accept=".csv,.tsv,.txt,text/csv,text/tab-separated-values,text/plain">
+          <label class="select-control" for="file-encoding">
+            <span data-i18n="file_encoding">File encoding</span>
+            <select id="file-encoding">
+              <option value="auto" data-i18n="encoding_auto">Auto (BOM or UTF-8)</option>
+              <option value="utf-8" data-i18n="encoding_utf8">UTF-8</option>
+              <option value="utf-16le" data-i18n="encoding_utf16le">UTF-16 LE</option>
+              <option value="utf-16be" data-i18n="encoding_utf16be">UTF-16 BE</option>
+              <option value="windows-1252" data-i18n="encoding_windows1252">Windows-1252</option>
+            </select>
+          </label>
           <button id="paste-button" class="button" type="button" data-i18n="paste">Paste</button>
           <button id="sample-button" class="button" type="button" data-i18n="sample">Load sample</button>
         </div>
@@ -52,7 +62,7 @@
         <div class="drop-glyph" aria-hidden="true">CSV</div>
         <div>
           <h2 id="drop-title" data-i18n="drop_title">Drop a CSV or TSV file here</h2>
-          <p data-i18n="drop_help">or use Open file or Paste. UTF-8 text up to 10 MiB.</p>
+          <p data-i18n="drop_help">or use Open file or Paste. UTF-8, UTF-16, or Windows-1252 text up to 10 MiB.</p>
         </div>
       </section>
 

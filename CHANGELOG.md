@@ -6,6 +6,20 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 
 ## [Unreleased]
 
+## [0.1.0-alpha.5] - 2026-08-19
+
+### Added
+
+- Add local browser file decoding for UTF-8, UTF-16 LE/BE, and Windows-1252,
+  with BOM detection and strict failure for malformed bytes.
+- Add bilingual encoding selection controls and browser regression coverage for
+  UTF-16 and Windows-1252 files.
+
+### Changed
+
+- Keep pasted text and the local MCP stdio contract explicitly UTF-8 while
+  allowing the browser file workflow to handle common spreadsheet encodings.
+
 ## [0.1.0-alpha.4] - 2026-08-17
 
 ### MCP and Release
@@ -52,3 +66,4 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 [0.1.0-alpha.2]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.2
 [0.1.0-alpha.3]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.3
 [0.1.0-alpha.4]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.4
+[0.1.0-alpha.5]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.5

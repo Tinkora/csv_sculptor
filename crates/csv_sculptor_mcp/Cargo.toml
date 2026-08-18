@@ -1,6 +1,6 @@
 [package]
 name = "csv_sculptor_mcp"
-version = "0.1.0-alpha.4"
+version = "0.1.0-alpha.5"
 description = "Local stdio MCP server for CSV Sculptor"
 publish = false
 edition.workspace = true
@@ -13,7 +13,7 @@ name = "csv_sculptor_mcp"
 path = "src/main.rs"
 
 [dependencies]
-csv_sculptor_core = { version = "0.1.0-alpha.4", path = "../csv_sculptor_core" }
+csv_sculptor_core = { version = "0.1.0-alpha.5", path = "../csv_sculptor_core" }
 futures-util = "0.3"
 rmcp = { version = "3.1.2", default-features = false, features = [
     "server",

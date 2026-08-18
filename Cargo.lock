@@ -86,7 +86,7 @@ dependencies = [
 
 [[package]]
 name = "csv_sculptor_core"
-version = "0.1.0-alpha.4"
+version = "0.1.0-alpha.5"
 dependencies = [
  "csv",
  "js-sys",
@@ -99,7 +99,7 @@ dependencies = [
 
 [[package]]
 name = "csv_sculptor_mcp"
-version = "0.1.0-alpha.4"
+version = "0.1.0-alpha.5"
 dependencies = [
  "csv_sculptor_core",
  "futures-util",
@@ -113,7 +113,7 @@ dependencies = [
 
 [[package]]
 name = "csv_sculptor_web"
-version = "0.1.0-alpha.4"
+version = "0.1.0-alpha.5"
 dependencies = [
  "csv_sculptor_core",
  "js-sys",
