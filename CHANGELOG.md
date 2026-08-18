@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file. The format
 follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the
 project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<!-- markdownlint-disable MD024 -->
+
 ## [Unreleased]
 
 ## [0.1.0-alpha.5] - 2026-08-19
@@ -67,3 +69,5 @@ project intends to use [Semantic Versioning](https://semver.org/spec/v2.0.0.html
 [0.1.0-alpha.3]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.3
 [0.1.0-alpha.4]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.4
 [0.1.0-alpha.5]: https://github.com/Tinkora/csv_sculptor/releases/tag/v0.1.0-alpha.5
+
+<!-- markdownlint-enable MD024 -->
